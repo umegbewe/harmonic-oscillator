@@ -17,6 +17,76 @@
 <script>
 
 (function() {
+  
+var physics = (function() {
+  // Initial condition for the system
+  var initialConditions = {
+    position:       1.0, // Box is shown on the right initially
+    velocity:       0.0, // Velocity is zero
+    springConstant: 100.0, // The higher the value the stiffer the spring
+    mass:           10.0 // The mass of the box
+  };
+
+  // Current state of the system
+  var state = {
+    /*
+    Position of the box:
+      0 is when the box is at the center.
+      1.0 is the maximum position to the right.
+      -1.0 is the maximum position to the left.
+    */
+    position: 0,
+    velocity: 0,
+    springConstant: 0, // The higher the value the stiffer the spring
+    mass: 0 // The mass of the box
+  };
+
+  var deltaT = 0.016; // The length of the time increment, in seconds.
+
+  function resetStateToInitialConditions() {
+    state.position = initialConditions.position;
+    state.velocity = initialConditions.velocity;
+    state.springConstant = initialConditions.springConstant;
+    state.mass = initialConditions.mass;
+  }
+
+  // Returns acceleration (change of velocity) for the given position
+  function calculateAcceleration(x) {
+    // We are using the equation of motion for the harmonic oscillator:
+    // a = -(k/m) * x
+    // Where a is acceleration, x is displacement, k is spring constant and m is mass.
+
+    return -(state.springConstant / state.mass) * x;
+  }
+
+  // Calculates the new velocity: current velocity plus the change.
+  function newVelocity(acceleration) {
+    return state.velocity + deltaT * acceleration;
+  }
+
+  // Calculates the new position: current position plus the change.
+  function newPosition() {
+    return state.position + deltaT * state.velocity;
+  }
+
+  // The main function that is called on every animation frame.
+  // It calculates and updates the current position of the box.
+  function updatePosition() {
+    var acceleration = calculateAcceleration(state.position);
+    state.velocity = newVelocity(acceleration);
+    state.position = newPosition();
+    if (state.position > 1) { state.position = 1; }
+    if (state.position < -1) { state.position = -1; }
+  }
+
+  return {
+    resetStateToInitialConditions: resetStateToInitialConditions,
+    updatePosition: updatePosition,
+    initialConditions: initialConditions,
+    state: state,
+  };
+})();
+  
 // Draw the scene
 var graphics = (function() {
   var canvas = null, // Canvas DOM element.
