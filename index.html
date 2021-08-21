@@ -272,6 +272,50 @@ var simulation = (function() {
 })();
 
 simulation.start();
+  
+// Get input for the mass and the spring constant from the user
+var userInput = (function(){
+  // Update mass and spring constant with selected values
+  function updateSimulation(massInput, springConstantInput) {
+    physics.resetStateToInitialConditions();
+    physics.state.mass = parseFloat(massInput.value) || physics.initialConditions.mass;
+    physics.state.springConstant = parseFloat(springConstantInput.value) || physics.initialConditions.springConstant;
+  }
+
+  function init() {
+    // Mass
+    // -----------
+
+    var massInput = document.getElementById("HarmonicOscillator-mass");
+
+    // Set initial mass value
+    massInput.value = physics.initialConditions.mass;
+
+    // User updates mass in simulation
+    massInput.addEventListener('input', function() {
+      updateSimulation(massInput, springConstantInput);
+    });
+
+    // Spring constant
+    // -----------
+
+    var springConstantInput = document.getElementById("HarmonicOscillator-springConstant");
+
+    // Set initial spring constant value
+    springConstantInput.value = physics.initialConditions.springConstant;
+
+    // User updates spring constant in simulation
+    springConstantInput.addEventListener('input', function() {
+      updateSimulation(massInput, springConstantInput);
+    });
+  }
+
+  return {
+    init: init
+  };
+})();
+
+userInput.init();
 
 })();
 </script>
