@@ -222,11 +222,37 @@ var graphics = (function() {
   };
 })();
 
-// Call init function
-graphics.init(function(){});
+// Start the simulation
+var simulation = (function() {
+  // The method is called 60 times per second
+  function animate() {
+    physics.updatePosition();
+    graphics.drawScene(physics.state.position);
+    window.requestAnimationFrame(animate);
+  }
 
-// Draw scene
-graphics.drawScene(0);
+  function start() {
+    graphics.init(function() {
+      // Use the initial conditions for the simulation
+      physics.resetStateToInitialConditions();
+
+      // Redraw the scene if page is resized
+      window.addEventListener('resize', function(event){
+        graphics.fitToContainer();
+        graphics.drawScene(physics.state.position);
+      });
+
+      // Start the animation sequence
+      animate();
+    });
+  }
+
+  return {
+    start: start
+  };
+})();
+
+simulation.start();
 
 })();
 </script>
